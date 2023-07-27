@@ -1,5 +1,5 @@
 {
-  "name": "fe-utilities",
+  "name": "@funnelenvy-npm/fe-dev-utils",
   "version": "1.0.0",
   "description": "Helper function to build client side A/B tests",
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maaislam/fe-utilities.git"
+    "url": "git+https://github.com/FunnelEnvy/fe-dev-utils.git"
   },
   "keywords": [
     "A/B testing",
@@ -24,9 +24,9 @@
   "author": "Arafat",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/maaislam/fe-utilities/issues"
+    "url": "https://github.com/FunnelEnvy/fe-dev-utils/issues"
   },
-  "homepage": "https://github.com/maaislam/fe-utilities#readme",
+  "homepage": "https://github.com/FunnelEnvy/fe-dev-utils#readme",
   "devDependencies": {
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",

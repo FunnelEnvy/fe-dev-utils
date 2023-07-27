@@ -1,4 +1,4 @@
-/**
+/*
     Returns a promise that resolves with an object containing all elements that match a given CSS selector. If no elements are found, it will wait for mutations on the document body and retry until elements matching the selector are found or a timeout is reached.
     @param {string} cssSelector - The CSS selector used to select elements to be found.
     @param {number} [outTimer=10000] - The maximum time in milliseconds to wait for elements to be found. Defaults to 100000ms.

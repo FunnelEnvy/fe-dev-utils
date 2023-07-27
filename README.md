@@ -37,7 +37,7 @@ If the desired elements are not found within the specified time, the function wi
 ### :scroll: Usage
 
 ```js
-import { getElement } from 'fe-utilities';
+import { getElement } from 'fe-dev-utils';
 
 // Find all elements with class 'my-class'
 getElement('.my-class')
@@ -87,7 +87,7 @@ This function may throw the following errors:
 
 ```js
 
-import { waitForConditions } from 'fe-utilities';
+import { waitForConditions } from 'fe-dev-utils';
 
 // Wait for two elements with class 'my-class' and an element with ID 'my-id'
 waitForConditions(['.my-class', '.my-class', '#my-id'], (elements) => {

@@ -1,4 +1,4 @@
-# fe-utilities [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+# fe-dev-utils [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 This is a library of helper function. It provides utility functions for checking and waiting for conditions on a page, and finding DOM elements.
 Installation
@@ -6,7 +6,7 @@ Installation
 You can install the package using npm:
 
 ```bash
-npm install fe-utilities
+npm i @funnelenvy-npm/fe-dev-utils
 ```
 
 ## :hammer_and_wrench: How tos

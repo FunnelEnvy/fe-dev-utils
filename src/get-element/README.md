@@ -35,7 +35,7 @@ getElement('.my-class')
     // Do something with the found elements
   })
   .catch((error) => {
-    console.error(error);
+    console.log(error);
   });
 ```
 
@@ -44,4 +44,4 @@ getElement('.my-class')
 * This function uses ```querySelectorAll``` to find the desired elements, so the CSS selector must conform to the rules for this function.
 * The ```MutationObserver``` is used to detect changes to the DOM and update the element selection accordingly. This allows the function to be resilient to changes in the DOM structure.
 * If the ```outTimer``` parameter is not provided, the default value of 10000 milliseconds (10 seconds) will be used.
-* If the desired elements are not found within the specified time, the function will reject with an error.
+* If the desired elements are not found within the specified time, the function will reject with a console log.

@@ -23,7 +23,7 @@ const onUrlChange = (callback, onError = null) => {
         try {
           callback(oldHref, mutation);
         } catch (error) {
-          console.error(`Error in callback function: ${error}`);
+          console.log(`Error in callback function: ${error}`);
         }
         observer.observe(document.documentElement, mutationConfig); // Reconnect the observer to continue observing URL changes
       }
@@ -40,7 +40,7 @@ const onUrlChange = (callback, onError = null) => {
     if (onError && typeof onError === 'function') {
       onError(error);
     } else {
-      console.error(`Error starting onUrlChange observer: ${error}`);
+      console.log(`Error starting onUrlChange observer: ${error}`);
     }
   }
 };

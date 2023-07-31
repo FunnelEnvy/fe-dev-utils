@@ -43,12 +43,14 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
         }, pollFreq);
         timeoutId = setTimeout(() => {
           clearIds();
-          reject(new Error(`Timeout while waiting for ${condition}`));
+          console.log(`Timeout while waiting for ${condition}`);
+          reject();
         }, timeout);
       });
     }
     return getElement(condition).catch((error) => {
-      throw new Error(`Failed to find elements matching selector '${condition}': ${error}`);
+      console.log(`Failed to find elements matching selector '${condition}': ${error}`);
+      return null;
     });
   });
 
@@ -69,7 +71,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
       if (onError && typeof onError === 'function') {
         onError(error);
       } else {
-        console.error(error);
+        console.log(error);
       }
     });
 };

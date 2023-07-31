@@ -32,7 +32,8 @@ const getElement = (cssSelector, outTimer = 10000) => {
     });
     setTimeout(() => {
       observer.disconnect();
-      reject(new Error(`Timeout while waiting for ${cssSelector}`));
+      console.log(`Timeout while waiting for ${cssSelector}`)
+      reject();
     }, outTimer);
   });
 };

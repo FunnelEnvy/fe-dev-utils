@@ -1,47 +1,47 @@
 
-# :hammer_and_wrench: How tos
-
-## :gem: getElement
+# :gem: getElement
 
 ```js
-getElement(cssSelector, outTimer = 10000)
+getElement(cssSelector, outTimer = 10000, onError = null)
 ```
 
-This function returns a Promise that resolves with an object containing all elements that match a given CSS selector. If no elements are found, it will wait for mutations on the document body and retry until elements matching the selector are found or a timeout is reached.
+This function retrieves elements matching a CSS selector. It returns a promise that resolves with an object containing the selector and matching elements once they are found. If the elements are not found within the specified timeout, it rejects the promise.
 
-### :gear: Parameters
+## :gear: Parameters
 
-* ```cssSelector``` (required): A string that specifies the CSS selector for the desired elements.
-* ```outTimer``` (optional): An integer that specifies the maximum number of milliseconds to wait for the desired elements to appear. If the elements are not found within this time, the function will reject with an error. The default value is 10000 (10 seconds).
+* `cssSelector` (required): The CSS selector to match elements.
 
-### :handshake: Return Value
+* `outTimer` (optional, Number): The maximum time in milliseconds to wait for the elements to exist. The default value is 10000ms.
 
-This function returns a Promise that resolves with an object containing the CSS selector and the matching elements. The object has the following properties:
+* `onError` (optional, Function): A callback function to handle errors during the waiting process. If not provided, errors will be logged to the console.
 
-* ```selector```: A string that specifies the CSS selector used to find the elements.
-* ```elements```: An array of DOM elements that match the CSS selector.
+## :handshake: Return Value
 
-If the desired elements are not found within the specified time, the function will reject with an error.
+A promise that resolves with an object containing the selector and matching elements once they are found.
+
+### :red_circle: Errors
+
+* It throws an error if the timeout is reached and the elements are not found.
 
 ### :scroll: Usage
 
 ```js
 import { getElement } from 'pageutilities';
 
-// Find all elements with class 'my-class'
-getElement('.my-class')
+// Get elements with class 'my-class', waiting for a maximum of 5000ms
+getElement('.my-class', 5000)
   .then((result) => {
-    console.log(`Found ${result.elements.length} elements with selector '${result.selector}'`);
-    // Do something with the found elements
+    console.log(`Found ${result.elements.length} elements with class 'my-class'`);
   })
   .catch((error) => {
-    console.log(error);
+    console.error(`An error occurred: ${error}`);
   });
 ```
 
-### Notes
+```js
+import { getElement } from 'pageutilities';
 
-* This function uses ```querySelectorAll``` to find the desired elements, so the CSS selector must conform to the rules for this function.
-* The ```MutationObserver``` is used to detect changes to the DOM and update the element selection accordingly. This allows the function to be resilient to changes in the DOM structure.
-* If the ```outTimer``` parameter is not provided, the default value of 10000 milliseconds (10 seconds) will be used.
-* If the desired elements are not found within the specified time, the function will reject with a console log.
+// Get elements with class 'my-class', with an error callback
+getElement('.my-class', 5000, (error) => {
+  console.error(`Error occurred during element retrieval: ${error.message}`);
+});

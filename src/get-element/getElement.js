@@ -1,11 +1,13 @@
 /**
-    Returns a promise that resolves with an object containing all elements that match a given CSS selector. If no elements are found, it will wait for mutations on the document body and retry until elements matching the selector are found or a timeout is reached.
-    @param {string} cssSelector - The CSS selector used to select elements to be found.
-    @param {number} [outTimer=10000] - The maximum time in milliseconds to wait for elements to be found. Defaults to 100000ms.
-    @returns {Promise} - A promise that resolves with an object containing the CSS selector and an array of found elements.
-    @throws {Error} - If a timeout is reached before elements matching the selector are found.
-    */
-const getElement = (cssSelector, outTimer = 10000) => {
+ * Get elements matching a CSS selector. Waits for the elements to exist and returns a promise.
+ *
+ * @param {string} cssSelector - The CSS selector to match elements.
+ * @param {number} [outTimer=10000] - (Optional) The maximum time in milliseconds to wait for the elements to exist. Default is 10000ms.
+ * @param {function} [onError=null] - (Optional) A callback function to handle errors during the waiting process. If not provided, errors will be logged to the console.
+ * @returns {Promise} A promise that resolves with an object containing the selector and matching elements once they are found.
+ * @throws {Error} If the timeout is reached and the elements are not found.
+ */
+const getElement = (cssSelector, outTimer = 10000, onError = null) => {
   const els = document.querySelectorAll(cssSelector);
   if (els.length > 0) {
     return Promise.resolve({
@@ -32,6 +34,12 @@ const getElement = (cssSelector, outTimer = 10000) => {
     });
     setTimeout(() => {
       observer.disconnect();
+      const errorMessage = `Timeout while waiting for ${cssSelector}`;
+      if (onError && typeof onError === 'function') {
+        onError(errorMessage);
+      } else {
+        console.log(errorMessage);
+      }
       console.log(`Timeout while waiting for ${cssSelector}`)
       reject();
     }, outTimer);

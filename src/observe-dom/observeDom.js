@@ -1,4 +1,4 @@
-const observeDOM = (targetSelectorString, callbackFunction, configObject, onError) => {
+const observeDom = (targetSelectorString, callbackFunction, configObject, onError) => {
     const defaultConfig = {
       childList: true,
       subtree: true,
@@ -32,20 +32,6 @@ const observeDOM = (targetSelectorString, callbackFunction, configObject, onErro
     }
   };
   
-  // Example usage
-  const customConfig = {
-    childList: true,
-    attributes: false,
-  };
+ export default observeDom
   
-  // Start observing and get the disconnect function
-  const disconnectObserver = observeDOM('#targetElement', (mutation) => {
-    console.log('DOM changed:', mutation);
-  }, customConfig);
-  
-  // When the target element is found or when you want to stop observing, call disconnect
-  if (disconnectObserver) {
-    // Call this function to stop observing
-    disconnectObserver();
-  }
   

@@ -124,5 +124,5 @@ const exitIntent = (options, callback, onError) => {
     });
   };
   
-
+export default exitIntent;
   

@@ -1,10 +1,10 @@
 {
   "name": "@funnelenvy-npm/fe-dev-utils",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Helper function to build client side A/B tests",
   "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: specified\" && exit 1",
     "build": "webpack"
   },
   "repository": {

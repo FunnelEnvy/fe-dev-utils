@@ -1,6 +1,5 @@
 /**
  * Get elements matching a CSS selector. Waits for the elements to exist and returns a promise.
- *
  * @param {string} cssSelector - The CSS selector to match elements.
  * @param {number} [outTimer=10000] - (Optional) The maximum time in milliseconds to wait for the elements to exist. Default is 10000ms.
  * @param {function} [onError=null] - (Optional) A callback function to handle errors during the waiting process. If not provided, errors will be logged to the console.
@@ -40,7 +39,7 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
       } else {
         console.log(errorMessage);
       }
-      console.log(`Timeout while waiting for ${cssSelector}`)
+      console.log(`Timeout while waiting for ${cssSelector}`);
       reject();
     }, outTimer);
   });

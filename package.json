@@ -2,7 +2,7 @@
   "name": "@funnelenvy-npm/fe-dev-utils",
   "version": "1.0.5",
   "description": "Helper function to build client side A/B tests",
-  "main": "dist/index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: specified\" && exit 1",
     "build": "webpack"

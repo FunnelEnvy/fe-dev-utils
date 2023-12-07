@@ -43,31 +43,23 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
         }, pollFreq);
         timeoutId = setTimeout(() => {
           clearIds();
-          console.log(`Timeout while waiting for ${condition}`);
-          reject();
+          reject(`Timeout while waiting for ${condition}`);
         }, timeout);
       });
     }
-    return getElement(condition).catch((error) => {
-      console.log(`Failed to find elements matching selector '${condition}': ${error}`);
-      return null;
-    });
+    return getElement(condition, timeout);
   });
 
   Promise.all(promises)
-    .then((fullfilledPromises) => {
-      const elements = fullfilledPromises.reduce((acc, curr) => {
-        if (curr) {
-          acc[curr.selector] = curr.elements;
-        }
-        return acc;
-      }, {});
-
-      //console.log('All conditions are true');
-      callback(elements);
+    .then((results) => {
+      const errors = results.filter(result => result instanceof Error);
+      if (errors.length > 0) {
+        // If any promises were rejected, create a list of errors and throw a new error
+        throw new Error(`Some promises were rejected: ${errors.map(error => error.message).join(', ')}`);
+      }
+      callback(results);
     })
     .catch((error) => {
-      //console.error(error);
       if (onError && typeof onError === 'function') {
         onError(error);
       } else {

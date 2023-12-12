@@ -43,7 +43,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
         }, pollFreq);
         timeoutId = setTimeout(() => {
           clearIds();
-          reject(`Timeout while waiting for ${condition}`);
+          reject(new Error(`Timeout while waiting for ${condition}`));
         }, timeout);
       });
     }
@@ -52,11 +52,6 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
 
   Promise.all(promises)
     .then((results) => {
-      const errors = results.filter(result => result instanceof Error);
-      if (errors.length > 0) {
-        // If any promises were rejected, create a list of errors and throw a new error
-        throw new Error(`Some promises were rejected: ${errors.map(error => error.message).join(', ')}`);
-      }
       callback(results);
     })
     .catch((error) => {

@@ -55,19 +55,21 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
   });
 
   Promise.all(promises)
-    .then((fullfilledPromises) => {
-      const elements = fullfilledPromises.reduce((acc, curr) => {
-        if (curr) {
+    .then((fulfilledPromises) => {
+      const elements = fulfilledPromises.reduce((acc, curr) => {
+        if (curr && curr !== null) {
           acc[curr.selector] = curr.elements;
         }
         return acc;
       }, {});
 
-      //console.log('All conditions are true');
-      callback(elements);
+      if (Object.keys(elements).length > 0) {
+        callback(elements);
+      } else {
+        console.log('No elements found for any condition');
+      }
     })
     .catch((error) => {
-      //console.error(error);
       if (onError && typeof onError === 'function') {
         onError(error);
       } else {

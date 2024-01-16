@@ -35,34 +35,47 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
           clearInterval(intervalId);
           clearTimeout(timeoutId);
         };
+
         intervalId = setInterval(() => {
           if (condition()) {
             clearIds();
-            resolve();
+            resolve(true);
           }
         }, pollFreq);
+
         timeoutId = setTimeout(() => {
           clearIds();
-          reject();
+          reject(new Error(`Timeout while waiting for condition`));
         }, timeout);
       });
+    } else if (typeof condition === 'string') {
+      return getElement(condition).then((result) => {
+        if (result && result.elements.length > 0) {
+          return result;
+        } else {
+          throw new Error(`Invalid CSS Selector: ${condition}`);
+        }
+      });
+    } else {
+      throw new TypeError('Invalid condition type. Must be a function or a string (CSS selector)');
     }
-    return getElement(condition).catch((error) => {
-      return null;
-    });
   });
 
-  Promise.all(promises)
-    .then((fulfilledPromises) => {
-      const elements = fulfilledPromises.reduce((acc, curr) => {
-        if (curr && curr !== null) {
-          acc[curr.selector] = curr.elements;
-        }
-        return acc;
-      }, {});
+  Promise.allSettled(promises)
+    .then((results) => {
+      const fulfilledPromises = results
+        .filter((result) => result.status === 'fulfilled' && result.value)
+        .map((result) => result.value);
 
-      if (Object.keys(elements).length > 0) {
+      if (fulfilledPromises.length === conditions.length) {
+        const elements = fulfilledPromises.reduce((acc, curr) => {
+          acc[curr.selector] = curr.elements;
+          return acc;
+        }, {});
+
         callback(elements);
+      } else {
+        console.log('Not all conditions were met');
       }
     })
     .catch((error) => {

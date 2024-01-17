@@ -7,19 +7,30 @@
  * @throws {Error} If the timeout is reached and the elements are not found.
  */
 const getElement = (cssSelector, outTimer = 10000, onError = null) => {
+  let timeoutId;
+
+  const clearTimer = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  };
+
   const els = document.querySelectorAll(cssSelector);
   if (els.length > 0) {
+    clearTimer(); // Clear the timeout if elements are found
     return Promise.resolve({
       selector: cssSelector,
       elements: els,
     });
   }
+
   return new Promise((resolve, reject) => {
     const observer = new MutationObserver((mutations) => {
       mutations.forEach(() => {
         const elems = document.querySelectorAll(cssSelector);
         if (elems.length > 0) {
           observer.disconnect();
+          clearTimer(); // Clear the timeout if elements are found
           resolve({
             selector: cssSelector,
             elements: elems,
@@ -27,11 +38,14 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
         }
       });
     });
+
     observer.observe(document.body, {
       childList: true,
       subtree: true,
+      attributes: true,
     });
-    setTimeout(() => {
+
+    timeoutId = setTimeout(() => {
       observer.disconnect();
       const errorMessage = `Timeout while waiting for ${cssSelector}`;
       if (onError && typeof onError === 'function') {
@@ -44,5 +58,6 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
     }, outTimer);
   });
 };
+
 
 export default getElement;

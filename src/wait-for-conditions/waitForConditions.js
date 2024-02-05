@@ -1,4 +1,5 @@
 import getElement from '../get-element/getElement';
+import log from '../log/log';
 
 /**
  * Poller function that waits for a set of conditions to be true before executing a callback function.
@@ -38,6 +39,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
         intervalId = setInterval(() => {
           if (condition()) {
             clearIds();
+            log(`Timeout while waiting for ${condition}`);
             resolve();
           }
         }, pollFreq);
@@ -48,6 +50,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
       });
     }
     return getElement(condition).catch((error) => {
+      log(`Failed to find elements matching selector '${condition}': ${error}`);
       return null;
     });
   });
@@ -63,11 +66,15 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
 
       if (Object.keys(elements).length > 0) {
         callback(elements);
+      } else {
+        log('No elements found for any of the conditions');
       }
     })
     .catch((error) => {
       if (onError && typeof onError === 'function') {
         onError(error);
+      } else {
+        log(error);
       }
     });
 };

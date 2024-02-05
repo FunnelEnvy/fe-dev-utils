@@ -1,7 +1,7 @@
 const log = (message, method = 'log') => {
 	try {
 		if (
-			/fecli|QA_test|debug_mode|FE_LOADER|jump/.test(window.location.href) ||
+			/fecli|QA_test|debug_mode|FE_LOADER/.test(window.location.href) ||
 			window?.['FeActivityLoader']?.detectTypeOfEnvironment() === 'DEV' ||
 			window?.['FeActivityLoader']?.detectTypeOfEnvironment() === 'QA'
 		) {

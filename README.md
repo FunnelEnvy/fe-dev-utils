@@ -129,7 +129,7 @@ onUrlChange((oldHref, mutation) => {
 log(message, method, ...args)
 ```
 
-This functions allows for logging to be toggled on in developer only environments to allow for debugging without leaving logging statements in production / customer facing settings.
+This functions allows for logging to be toggled on in developer only environments to allow for debugging without leaving logging statements in production / customer facing settings. Logging will be enabled on DEV and QA environments, as well as URLs containing fecli, QA_test, debug_mode, FE_LOADER.
 
 ### :red_circle: Errors:
 

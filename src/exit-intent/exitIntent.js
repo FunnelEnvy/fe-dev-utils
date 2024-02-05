@@ -1,3 +1,4 @@
+import log from '../log/log'
 import cookie from '../cookie-manager/cookie'
 
 
@@ -56,7 +57,7 @@ const exitIntent = (options, callback, onError) => {
     return typeof onError === 'function'
       ? onError
       : (error) => {
-          console.error(error);
+          log(error, 'error');
         };
   }
   

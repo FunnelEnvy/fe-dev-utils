@@ -1,3 +1,4 @@
+import log from '../log/log';
 /**
  * Get elements matching a CSS selector. Waits for the elements to exist and returns a promise.
  * @param {string} cssSelector - The CSS selector to match elements.
@@ -51,9 +52,9 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
       if (onError && typeof onError === 'function') {
         onError(errorMessage);
       } else {
-        console.log(errorMessage);
+        log(errorMessage);
       }
-      console.log(`Timeout while waiting for ${cssSelector}`);
+      log(`Timeout while waiting for ${cssSelector}`);
       reject();
     }, outTimer);
   });

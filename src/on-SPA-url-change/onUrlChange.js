@@ -1,3 +1,5 @@
+import log from '../log/log.js';
+
 /**
  * Executes a callback function when the URL changes in a single page application (SPA).
  * Uses a MutationObserver to observe changes to the document body and detect URL changes.
@@ -18,12 +20,12 @@ const onUrlChange = (callback, onError = null) => {
         const oldHref = observer.previousUrl;
         // Update the previous URL and execute the callback function
         observer.previousUrl = currentUrl;
-        //console.log('URL changed!');
+        log('URL changed!');
         observer.disconnect(); // Disconnect the observer to avoid triggering an infinite loop when making DOM changes in the callback function
         try {
           callback(oldHref, mutation);
         } catch (error) {
-          console.log(`Error in callback function: ${error}`);
+          log(`Error in callback function: ${error}`);
         }
         observer.observe(document.documentElement, mutationConfig); // Reconnect the observer to continue observing URL changes
       }
@@ -40,7 +42,7 @@ const onUrlChange = (callback, onError = null) => {
     if (onError && typeof onError === 'function') {
       onError(error);
     } else {
-      console.log(`Error starting onUrlChange observer: ${error}`);
+      log(`Error starting onUrlChange observer: ${error}`);
     }
   }
 };

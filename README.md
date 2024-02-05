@@ -133,7 +133,7 @@ This functions allows for logging to be toggled on in developer only environment
 
 ### :red_circle: Errors:
 
-* Method is intentionally wrapped in a try / catch to prevent errors in the log method from effecting functions calling it.
+* Method is intentionally wrapped in a try / catch to prevent errors in the log method from affecting functions calling it.
 
 ### :scroll: Usage
 

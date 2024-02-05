@@ -6,9 +6,12 @@ const log = (message, method = 'log') => {
 			window?.['FeActivityLoader']?.detectTypeOfEnvironment() === 'QA'
 		) {
 			// header/content separation
-			let argsArray = [...arguments];
-			argsArray.shift()
-			console?.[method](message, argsArray)
+			const [_messageArg, _methodArg, ...rest] = arguments;
+			if (rest.length > 0) {
+				console[method](message, ...rest);
+			} else {
+				console?.[method](message)
+			}
 		}
 	} catch (err) {
 		// Do nothing

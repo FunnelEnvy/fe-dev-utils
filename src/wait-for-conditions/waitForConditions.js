@@ -48,6 +48,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
       });
     }
     return getElement(condition).catch((error) => {
+      throw new Error(err);
       return null;
     });
   });

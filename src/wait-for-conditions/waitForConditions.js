@@ -35,41 +35,52 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
           clearInterval(intervalId);
           clearTimeout(timeoutId);
         };
+
         intervalId = setInterval(() => {
           if (condition()) {
             clearIds();
-            resolve();
+            resolve(true);
           }
         }, pollFreq);
+
         timeoutId = setTimeout(() => {
           clearIds();
-          reject();
+          reject(new Error(`Condition timeout: ${condition.toString()}`));
         }, timeout);
       });
     }
-    return getElement(condition).catch((error) => {
-      throw new Error(error);
-      return null;
+
+    return new Promise((resolve, reject) => {
+      getElement(condition)
+        .then((elements) => {
+          if (elements) {
+            resolve({ selector: condition, elements });
+          } else {
+            reject(new Error(`Element not found: ${condition}`));
+          }
+        })
+        .catch((error) => reject(error));
     });
   });
 
   Promise.all(promises)
-    .then((fulfilledPromises) => {
-      const elements = fulfilledPromises.reduce((acc, curr) => {
-        if (curr && curr !== null) {
+    .then((results) => {
+      const elements = results.reduce((acc, curr) => {
+        if (curr && curr !== true) {
           acc[curr.selector] = curr.elements;
         }
         return acc;
       }, {});
 
-      if (Object.keys(elements).length > 0) {
-        callback(elements);
-      }
+      callback(elements);
     })
     .catch((error) => {
-      if (onError && typeof onError === 'function') {
+      if (typeof onError === 'function') {
         onError(error);
+      } else {
+        console.error('Error in waitForConditions:', error);
       }
     });
 };
+
 export default waitForConditions;

@@ -52,7 +52,7 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
         onError(errorMessage);
         reject();
       } else {
-        console.log(`Timeout while waiting for ${cssSelector}`);
+        //console.log(`Timeout while waiting for ${cssSelector}`);
         reject(errorMessage);
       }
       

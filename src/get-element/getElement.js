@@ -50,10 +50,7 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
       const errorMessage = `Timeout while waiting for ${cssSelector}`;
       if (onError && typeof onError === 'function') {
         onError(errorMessage);
-      } else {
-        console.log(errorMessage);
       }
-      console.log(`Timeout while waiting for ${cssSelector}`);
       reject(errorMessage);
     }, outTimer);
   });

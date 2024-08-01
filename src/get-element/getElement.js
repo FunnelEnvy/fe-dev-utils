@@ -6,48 +6,52 @@
  * @returns {Promise} A promise that resolves with an object containing the selector and matching elements once they are found.
  * @throws {Error} If the timeout is reached and the elements are not found.
  */
-const getElement = (cssSelector, outTimer = 10000, onError = null) => {
-  let timeoutId;
+const getElement = (cssSelectors, outTimer = 10000, onError = null) => {
+  let selectors = Array.isArray(cssSelectors) ? cssSelectors : [cssSelectors];
+  let results = {};
+  let intervalId;
 
   const clearTimer = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
+    if (intervalId) {
+      clearInterval(intervalId);
     }
   };
 
-  const els = document.querySelectorAll(cssSelector);
-  if (els.length > 0) {
-    clearTimer(); // Clear the timeout if elements are found
-    return Promise.resolve({
-      selector: cssSelector,
-      elements: els,
+  const checkElements = () => {
+    selectors = selectors.filter((selector) => {
+      const els = document.querySelectorAll(selector);
+      if (els.length > 0) {
+        results[selector] = els;
+        return false; // Remove from selectors to check
+      }
+      return true;
     });
-  }
+
+    if (selectors.length === 0) {
+      clearTimer();
+      resolve(results);
+    }
+  };
 
   return new Promise((resolve, reject) => {
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach(() => {
-        const elems = document.querySelectorAll(cssSelector);
-        if (elems.length > 0) {
-          observer.disconnect();
-          clearTimer(); // Clear the timeout if elements are found
-          resolve({
-            selector: cssSelector,
-            elements: elems,
-          });
-        }
-      });
+    selectors.forEach((selector) => {
+      const els = document.querySelectorAll(selector);
+      if (els.length > 0) {
+        results[selector] = els;
+        selectors = selectors.filter((s) => s !== selector); // Remove found selector
+      }
     });
 
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-    });
+    if (selectors.length === 0) {
+      resolve(results);
+      return;
+    }
 
-    timeoutId = setTimeout(() => {
-      observer.disconnect();
-      const errorMessage = `Timeout while waiting for ${cssSelector}`;
+    intervalId = setInterval(checkElements, 100);
+
+    setTimeout(() => {
+      clearTimer();
+      const errorMessage = `Timeout while waiting for selectors: ${selectors.join(', ')}`;
       if (onError && typeof onError === 'function') {
         onError(errorMessage);
       }
@@ -55,6 +59,5 @@ const getElement = (cssSelector, outTimer = 10000, onError = null) => {
     }, outTimer);
   });
 };
-
 
 export default getElement;

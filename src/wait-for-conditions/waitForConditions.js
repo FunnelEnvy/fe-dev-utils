@@ -25,6 +25,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
     throw new TypeError('The third parameter must be a number greater than or equal to 1000');
   }
 
+  // Wrap each condition in a promise that resolves when the condition is met
   const promises = conditions.map((condition) => {
     if (typeof condition === 'function') {
       return new Promise((resolve, reject) => {
@@ -35,36 +36,61 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
           clearInterval(intervalId);
           clearTimeout(timeoutId);
         };
+
         intervalId = setInterval(() => {
           if (condition()) {
             clearIds();
-            resolve();
+            resolve(true);
           }
         }, pollFreq);
+
         timeoutId = setTimeout(() => {
           clearIds();
-          reject();
+          reject(new Error('Condition timed out'));
         }, timeout);
       });
+    } else if (typeof condition === 'string') {
+      // Assume it's a selector string and check for the element's presence
+      return new Promise((resolve, reject) => {
+        let intervalId;
+        let timeoutId;
+
+        const clearIds = () => {
+          clearInterval(intervalId);
+          clearTimeout(timeoutId);
+        };
+
+        intervalId = setInterval(() => {
+          getElement(condition).then((result) => {
+            if (result && result.elements.length > 0) {
+              clearIds();
+              resolve({ selector: condition, elements: result.elements });
+            }
+          }).catch(reject);
+        }, pollFreq);
+
+        timeoutId = setTimeout(() => {
+          clearIds();
+          reject(new Error(`Element with selector "${condition}" not found within timeout`));
+        }, timeout);
+      });
+    } else {
+      return Promise.reject(new TypeError('Conditions must be functions or strings'));
     }
-    return getElement(condition).catch((error) => {
-      throw new Error(error);
-      return null;
-    });
   });
 
+  // Wait for all promises to resolve
   Promise.all(promises)
     .then((fulfilledPromises) => {
       const elements = fulfilledPromises.reduce((acc, curr) => {
-        if (curr && curr !== null) {
+        if (curr && typeof curr === 'object' && curr.selector) {
           acc[curr.selector] = curr.elements;
         }
         return acc;
       }, {});
 
-      if (Object.keys(elements).length > 0) {
-        callback(elements);
-      }
+      // Call the callback with all elements found
+      callback(elements);
     })
     .catch((error) => {
       if (onError && typeof onError === 'function') {
@@ -72,4 +98,5 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
       }
     });
 };
+
 export default waitForConditions;

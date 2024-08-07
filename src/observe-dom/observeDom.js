@@ -2,7 +2,6 @@ const observeDom = (targetSelectorString, callbackFunction, configObject, onErro
     const defaultConfig = {
       childList: true,
       subtree: true,
-      attributes: true,
     };
   
     const mergedConfig = { ...defaultConfig, ...configObject };

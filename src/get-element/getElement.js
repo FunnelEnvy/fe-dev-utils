@@ -7,56 +7,51 @@
  * @throws {Error} If the timeout is reached and the elements are not found.
  */
 const getElement = (cssSelectors, outTimer = 10000, onError = null) => {
-  let selectors = Array.isArray(cssSelectors) ? cssSelectors : [cssSelectors];
-  let results = {};
-  let intervalId;
-
-  const clearTimer = () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  };
-
-  const checkElements = () => {
-    selectors = selectors.filter((selector) => {
-      const els = document.querySelectorAll(selector);
-      if (els.length > 0) {
-        results[selector] = els;
-        return false; // Remove from selectors to check
-      }
-      return true;
-    });
-
-    if (selectors.length === 0) {
-      clearTimer();
-      resolve(results);
-    }
-  };
+  const selectors = Array.isArray(cssSelectors) ? cssSelectors : [cssSelectors];
+  const results = {};
+  let timeoutId;
+  let observer;
 
   return new Promise((resolve, reject) => {
-    selectors.forEach((selector) => {
-      const els = document.querySelectorAll(selector);
-      if (els.length > 0) {
-        results[selector] = els;
-        selectors = selectors.filter((s) => s !== selector); // Remove found selector
-      }
-    });
+    const checkElements = () => {
+      selectors.forEach((selector) => {
+        const els = document.querySelectorAll(selector);
+        if (els.length > 0) {
+          results[selector] = els;
+        }
+      });
 
-    if (selectors.length === 0) {
+      const unresolvedSelectors = selectors.filter(selector => !results[selector]);
+
+      // If all selectors are resolved, disconnect the observer and resolve the promise
+      if (unresolvedSelectors.length === 0) {
+        clearTimeout(timeoutId);
+        observer.disconnect();
+        resolve(results);
+      }
+    };
+
+    // Initial check in case elements are already available
+    checkElements();
+
+    // If some selectors are still unresolved, set up a MutationObserver
+    if (Object.keys(results).length < selectors.length) {
+      observer = new MutationObserver(checkElements);
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      // Set a timeout to reject the promise if selectors aren't found within the given time
+      timeoutId = setTimeout(() => {
+        observer.disconnect();
+        const errorMessage = `Timeout while waiting for selectors: ${selectors.join(', ')}`;
+        if (onError && typeof onError === 'function') {
+          onError(errorMessage);
+        }
+        reject(new Error(errorMessage));
+      }, outTimer);
+    } else {
+      // Resolve immediately if all selectors were found during the initial check
       resolve(results);
-      return;
     }
-
-    intervalId = setInterval(checkElements, 100);
-
-    setTimeout(() => {
-      clearTimer();
-      const errorMessage = `Timeout while waiting for selectors: ${selectors.join(', ')}`;
-      if (onError && typeof onError === 'function') {
-        onError(errorMessage);
-      }
-      reject(errorMessage);
-    }, outTimer);
   });
 };
 

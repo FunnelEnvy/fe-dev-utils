@@ -1,4 +1,4 @@
-import getElement from '../get-element/getElement';
+import checkElements from '../check-elements/checkElements';
 
 /**
  * Poller function that waits for a set of conditions to be true before executing a callback function.
@@ -47,7 +47,7 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
         }, timeout);
       });
     }
-    return getElement(condition).catch((error) => {
+    return checkElements(condition.split(',')).catch((error) => {
       throw new Error(error);
       return null;
     });

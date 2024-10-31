@@ -1,11 +1,13 @@
 import getElement from '../get-element/getElement';
+import loggingError from '../logging-error/loggingError';
 
 /**
  * Poller function that waits for a set of conditions to be true before executing a callback function.
  *
  * @param {Array} conditions - An array of conditions to be checked. Each condition can be a function that returns a boolean,
  *                             or a string that represents a CSS selector for an element to be found.
- * @param {function} callback - A callback function to be executed once all conditions are true. The callback function is passed
+ * @param {function|string} callback - A callback function to be executed once all conditions are true. The callback function is passed
+ *                                     Or a string to log as the activity name
  *                              an object that maps CSS selectors to the matching elements.
  * @param {number} timeout - (Optional) The maximum time in milliseconds to wait for all conditions to be true. Default is 10000ms.
  *
@@ -69,6 +71,8 @@ const waitForConditions = (conditions, callback, onError, timeout = 10000, pollF
     .catch((error) => {
       if (onError && typeof onError === 'function') {
         onError(error);
+      } else if (onError === 'string') {
+        loggingError(error, onError);
       }
     });
 };

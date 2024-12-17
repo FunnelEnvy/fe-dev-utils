@@ -1,4 +1,4 @@
-import onError from './on-error';
+import onError from '../on-error';
 
 /**
  * Observer function that checks for a target selector

@@ -1,9 +1,18 @@
+import onError from '../on-error';
+
 /**
  * Executes a callback function when the URL changes in a single page application (SPA).
  * Uses a MutationObserver to observe changes to the document body and detect URL changes.
- * @param {function} callback - The callback function to execute when the URL changes.
+ * @param {Object} options - Options object to configure the function.
+ * @param {function} options.callback - The callback function to execute when the URL changes.
+ * @param {string} [options.activity] - (Optional) Name of the activity the function is being called from.
+ * @param {function} [options.errorHandler] - (Optional) Function to call when execution encounters an error.
  */
-const onUrlChange = (callback, onError = null) => {
+const onUrlChange = ({
+  callback,
+  activity = null,
+  errorHandler = null,
+}) => {
   if (typeof callback !== 'function') {
     throw new Error('Callback function must be provided');
   }
@@ -37,10 +46,10 @@ const onUrlChange = (callback, onError = null) => {
     // Start observing changes to the document documentElement to detect URL changes
     observer.observe(document.documentElement, mutationConfig);
   } catch (error) {
-    if (onError && typeof onError === 'function') {
-      onError(error);
+    if (errorHandler && typeof errorHandler === 'function') {
+      errorHandler({ activity, error });
     } else {
-      console.log(`Error starting onUrlChange observer: ${error}`);
+      onError({ activity, error });
     }
   }
 };

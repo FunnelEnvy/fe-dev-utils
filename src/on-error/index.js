@@ -21,3 +21,5 @@ const onError = ({ activity, error }) => {
     }
   } catch (e) {}
 };
+
+export default onError;

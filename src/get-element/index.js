@@ -1,13 +1,22 @@
+import onError from '../on-error';
+
 /**
  * Get elements matching a CSS selector. Waits for the elements to exist and returns a promise.
- * @param {string} cssSelectors - The CSS selector to match elements.
- * @param {number} [outTimer=10000] - (Optional) The maximum time in milliseconds to wait for the elements to exist. Default is 10000ms.
- * @param {function} [onError=null] - (Optional) A callback function to handle errors during the waiting process. If not provided, errors will be logged to the console.
+ * @param {Object} options - Options object to configure the function.
+ * @param {Array|string} options.condition - The CSS selector to match elements.
+ * @param {string} [options.activity] - (Optional) Name of the activity the function is being called from, if onError is not set this will be used in the
+ * @param {number} [options.outTimer=10000] - (Optional) The maximum time in milliseconds to wait for the elements to exist. Default is 10000ms.
+ * @param {function} [errorHandler=null] - (Optional) A callback function to handle errors during the waiting process. If not provided, errors will be logged to the console.
  * @returns {Promise} A promise that resolves with an object containing the selector and matching elements once they are found.
- * @throws {Error} If the timeout is reached and the elements are not found.
+ * @throws {TypeError} If the timeout is reached and the elements are not found.
  */
-const getElement = (cssSelectors, outTimer = 10000, onError = null) => {
-  let selectors = Array.isArray(cssSelectors) ? cssSelectors : [cssSelectors];
+const getElement = ({
+  condition,
+  activity = "",
+  errorHandler = null,
+  outTimer = 10000,
+}) => {
+  let selectors = Array.isArray(condition) ? condition : [condition];
   let results = {};
 
   return new Promise((resolve, reject) => {
@@ -48,15 +57,16 @@ const getElement = (cssSelectors, outTimer = 10000, onError = null) => {
     setTimeout(() => {
       observer.disconnect();
       if (selectors.length > 0) {
-        const errorMessage = `Timeout while waiting for selectors: ${selectors.join(', ')}`;
-        if (onError && typeof onError === 'function') {
-          onError(errorMessage);
+        const error = new Error(`Timeout while waiting for selectors: ${selectors.join(', ')}`);
+        if (errorHandler && typeof errorHandler === 'function') {
+          errorHandler({ activity, error });
+        } else {
+          onError({ activity, error })
         }
-        reject(new Error(errorMessage));
+        reject(error);
       }
     }, outTimer);
   });
 };
 
 export default getElement;
-

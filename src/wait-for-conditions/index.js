@@ -60,7 +60,7 @@ const waitForConditions = ({
         }, timeout);
       });
     }
-    return getElement({ condition }).catch((error) => {
+    return getElement({ condition, activity, errorHandler }).catch((error) => {
       throw new Error(error);
     });
   });

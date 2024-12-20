@@ -1,3 +1,5 @@
+import { fullStack } from "make-error-cause";
+
 /**
  * Function for sending error messages to the backend
  * @param {Object} options - Options object to configure the function.
@@ -15,11 +17,13 @@ const onError = ({ activity, error }) => {
           location: window.location.href,
           activity,
           customer: window?.headerData?.user?.account_id ?? "",
-          stack_trace: JSON.stringify(error?.stack ?? error ?? ""),
+          stack_trace: JSON.stringify(fullStack(error)),
         }),
       });
     }
-  } catch (e) {}
+  } catch (e) {
+		console.log('error from onError:', e);
+	}
 };
 
 export default onError;

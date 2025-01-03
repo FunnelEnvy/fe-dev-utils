@@ -6,7 +6,7 @@ import onError from './on-error';
 import onUrlChange from './on-SPA-url-change';
 import waitForConditions from './wait-for-conditions';
 
-export {
+const feUtils = {
   cookie,
   exitIntent,
   getElement,
@@ -15,3 +15,5 @@ export {
   onUrlChange,
   waitForConditions,
 };
+
+export default feUtils;

@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "ESNext", // Use modern JavaScript features
+        "module": "CommonJS", // CommonJS module system for Node.js
+        "lib": [
+            "DOM",
+            "ESNext"
+        ], // Include DOM and modern ES features
+        "strict": true, // Enable all strict type-checking options
+        "esModuleInterop": true, // Enable compatibility with ES modules
+        "skipLibCheck": true, // Skip type checking of declaration files
+        "moduleResolution": "Node", // Resolve modules like Node.js
+        "outDir": "./dist", // Output directory for compiled files
+        "rootDir": "./src", // Root directory for source files
+        "resolveJsonModule": true, // Allow importing .json files
+        "declaration": true // Generate .d.ts files for TypeScript types
+    },
+    "include": [
+        "src/**/*"
+    ], // Include all files in the src directory
+    "exclude": [
+        "node_modules",
+        "dist"
+    ] // Exclude unnecessary files and folders
+}

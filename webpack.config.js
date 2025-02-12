@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: path.resolve(__dirname, 'src/index.js'),
+  entry: path.resolve(__dirname, 'src/index.ts'),
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',
@@ -11,11 +11,14 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js)$/,
+        test: /\.(ts|js)$/,
         exclude: /node_modules/,
         use: 'babel-loader',
       },
     ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   mode: 'production',
 };

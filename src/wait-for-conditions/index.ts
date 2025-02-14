@@ -2,12 +2,12 @@ import getElement from '../get-element';
 import onError from '../on-error';
 
 type WaitForConditionsOptions = {
-    conditions: (string | (() => boolean))[];
-    callback: (elements: Record<string, any>) => void;
-    activity?: string | null;
-    errorHandler?: ((errorDetails: { activity: string | null; error: Error }) => void) | null;
-    timeout?: number;
-    pollFreq?: number;
+	conditions: (string | (() => boolean))[];
+	callback: (elements: Record<string, any>) => void;
+	activity?: string | null;
+	errorHandler?: ((errorDetails: { activity: string | null; error: Error }) => void) | null;
+	timeout?: number;
+	pollFreq?: number;
 };
 
 /**
@@ -18,72 +18,79 @@ type WaitForConditionsOptions = {
  *                       or `timeout` and `pollFreq` are not numbers greater than or equal to 1000 and 10, respectively.
  */
 const waitForConditions = ({
-    conditions,
-    callback,
-    activity = null,
-    errorHandler = null,
-    timeout = 10000,
-    pollFreq = 100,
+	conditions,
+	callback,
+	activity = null,
+	errorHandler = null,
+	timeout = 10000,
+	pollFreq = 100,
 }: WaitForConditionsOptions): void => {
-    if (!Array.isArray(conditions)) {
-        throw new TypeError('The first parameter must be an array');
-    }
+	if (!Array.isArray(conditions)) {
+		throw new TypeError('The first parameter must be an array');
+	}
 
-    if (typeof callback !== 'function') {
-        throw new TypeError('The second parameter must be a function');
-    }
+	if (typeof callback !== 'function') {
+		throw new TypeError('The second parameter must be a function');
+	}
 
-    if (typeof timeout !== 'number' || timeout < 1000) {
-        throw new TypeError('The third parameter must be a number greater than or equal to 1000');
-    }
+	if (typeof timeout !== 'number' || timeout < 1000) {
+		throw new TypeError('The third parameter must be a number greater than or equal to 1000');
+	}
 
-    const promises = conditions.map((condition) => {
-        if (typeof condition === 'function') {
-            return new Promise<void>((resolve, reject) => {
-                let intervalId: NodeJS.Timeout;
-                let timeoutId: NodeJS.Timeout;
+	const promises = conditions.map(async (condition) => {
+		if (typeof condition === 'function') {
+			return new Promise((resolve, reject) => {
+				let intervalId: NodeJS.Timeout;
+				let timeoutId: NodeJS.Timeout;
 
-                const clearIds = () => {
-                    clearInterval(intervalId);
-                    clearTimeout(timeoutId);
-                };
-                intervalId = setInterval(() => {
-                    if (condition()) {
-                        clearIds();
-                        resolve();
-                    }
-                }, pollFreq);
-                timeoutId = setTimeout(() => {
-                    clearIds();
-                    reject();
-                }, timeout);
-            });
-        }
-        return getElement({ condition, activity: activity ?? undefined, errorHandler: () => null }).catch((error) => {
-            throw new Error(error);
-        });
-    });
+				const clearIds = () => {
+					clearInterval(intervalId);
+					clearTimeout(timeoutId);
+				};
+				intervalId = setInterval(() => {
+					try {
+						if (condition()) {
+							clearIds();
+							resolve(true);
+						}
+					} catch (err) {
+						clearIds();
+						reject(new Error(`Error executing condition function: ${err}`));
+					}
+				}, pollFreq);
+				timeoutId = setTimeout(() => {
+					clearIds();
+					reject(new Error(`Condition function timed out: ${condition.toString()}`));
+				}, timeout);
+			});
+		}
+		return getElement({ condition, activity: activity ?? undefined, errorHandler: () => null })
+	});
 
-    Promise.all(promises)
-        .then((fulfilledPromises) => {
-            const elements = fulfilledPromises.reduce<Record<string, NodeListOf<Element>>>((acc, curr) => {
-                if (curr && typeof curr.selector === 'string') {
-                    acc[curr.selector] = curr.elements;
-                }
-                return acc;
-            }, {});
+	Promise.all(promises)
+		.then((results: any) => {
+			// Build an object of elements from string conditions.
+			// Note: Function conditions resolve to a boolean and aren’t included.
+			const elements = conditions.reduce<Record<string, NodeListOf<Element>>>((acc, cond, index) => {
+				if (typeof cond === 'string') {
+					const result = results[index];
+					if (result && typeof result.selector === 'string') {
+						acc[result.selector] = result.elements;
+					}
+				}
+				return acc;
+			}, {});
 
-            if (Object.keys(elements).length > 0) {
-                callback(elements);
-            }
-        })
-        .catch((error) => {
-            if (errorHandler && typeof errorHandler === 'function') {
-                errorHandler({ activity, error });
-            } else {
-                onError({ activity: activity ?? undefined, error });
-            }
-        });
+			// Now that all promises have resolved, fire the callback.
+			callback(elements);
+		})
+		.catch((error) => {
+			if (errorHandler && typeof errorHandler === 'function') {
+				errorHandler({ activity, error });
+			} else {
+				onError({ activity: activity ?? undefined, error });
+			}
+		});
 };
 
 export default waitForConditions;

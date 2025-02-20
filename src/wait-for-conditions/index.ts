@@ -37,7 +37,7 @@ const waitForConditions = ({
     throw new TypeError('The third parameter must be a number greater than or equal to 1000');
   }
 
-  const promises = conditions.map(async (condition) => {
+  const promises = conditions.map((condition) => {
     if (typeof condition === 'function') {
       return new Promise((resolve, reject) => {
         let intervalId: NodeJS.Timeout;

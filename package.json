@@ -1,6 +1,6 @@
 {
   "name": "@funnelenvy-npm/fe-dev-utils",
-  "version": "1.0.17",
+  "version": "1.1.0",
   "description": "Helper function to build client side A/B tests",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

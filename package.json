@@ -1,12 +1,12 @@
 {
   "name": "@funnelenvy-npm/fe-dev-utils",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "Helper function to build client side A/B tests",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: specified\" && exit 1",
-    "build": "tsc && webpack",
+    "build": "tsc",
     "type-check": "tsc --noEmit",
     "start": "node dist/index.js"
   },

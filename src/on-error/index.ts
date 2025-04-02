@@ -36,7 +36,7 @@ const onError = ({
             window?.FeActivityLoader?.detectTypeOfEnvironment() === "PROD"
         ) {
             fetch(
-                "https://8tim12msn8.execute-api.us-east-1.amazonaws.com/prod/logging",
+                "https://funnelenvy.retool.com/url/error-logging",
                 {
                     method: "POST",
                     mode: "cors",
@@ -45,7 +45,7 @@ const onError = ({
                         location: window.location.href,
                         activity,
                         customer: window?.headerData?.user?.account_id ?? "",
-                        stack_trace: JSON.stringify(error?.stack ?? error ?? ""),
+                        stack_trace: error?.stack ?? error ?? null,
                     }),
                 }
             );

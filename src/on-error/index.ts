@@ -45,7 +45,7 @@ const onError = ({
                         location: window.location.href,
                         activity,
                         customer: window?.headerData?.user?.account_id ?? "",
-                        stack_trace: error?.stack ?? error ?? null,
+                        stack_trace: JSON.stringify(error?.stack ?? error ?? ""),
                     }),
                 }
             );

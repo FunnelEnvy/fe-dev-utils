@@ -31,26 +31,10 @@ const onError = ({
     error: any;
 }): void => {
     try {
-        if (
-            error &&
-            window?.FeActivityLoader?.detectTypeOfEnvironment() === "PROD"
-        ) {
-            fetch(
-                "https://funnelenvy.retool.com/url/error-logging",
-                {
-                    method: "POST",
-                    mode: "cors",
-                    body: JSON.stringify({
-                        message: error?.message ?? error ?? "",
-                        location: window.location.href,
-                        activity,
-                        customer: window?.headerData?.user?.account_id ?? "",
-                        stack_trace: JSON.stringify(error?.stack ?? error ?? ""),
-                    }),
-                }
-            );
-        }
-    } catch (e) { }
+      // DO NOTHING
+    } catch (e) {
+      // DO NOTHING
+    }
 };
 
 export default onError;

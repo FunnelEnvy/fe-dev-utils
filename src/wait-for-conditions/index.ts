@@ -88,16 +88,7 @@ const waitForConditions = ({
       if (errorHandler && typeof errorHandler === 'function') {
         errorHandler({ activity, error });
       } else {
-        // @ts-ignore
-        const currentActivity = window?.FeActivityLoader?.getActivities()
-          .find((a: any) => a.activity === (activity ?? ""));
-        if (
-          currentActivity &&
-          currentActivity.enableWaitForConditionsLogging &&
-          currentActivity.enableWaitForConditionsLogging === true
-        ) {
-          onError({ activity: activity ?? undefined, error });
-        }
+        onError({ activity: activity ?? undefined, error });
       }
     });
 };
